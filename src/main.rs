@@ -13,6 +13,7 @@ use rocket_contrib::json::Json;
 use models::{Post, NewPost, UpdatePost};
 use dotenv::dotenv;
 use std::env;
+use log::{info};
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
@@ -74,13 +75,12 @@ fn create(post: Json<NewPost>) -> Json<Post> {
 #[get("/posts/<id>")]
 fn read_detail(id: i32) -> Json<Post> {
     use schema::posts::dsl::posts;
-    
+    info!("Razor id: {}",  id);
     let connection = establish_connection();
     let result = posts
         .find(id)
         .get_result::<Post>(&connection)
         .expect(&format!("Unable to find post {}", id));
-
     Json(result)
 }
 
