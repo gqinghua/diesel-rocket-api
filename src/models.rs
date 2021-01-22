@@ -24,3 +24,8 @@ pub struct UpdatePost<'a> {
     pub body: Option<&'a str>,
     pub published: Option<bool>,
 }
+
+#[derive(Serialize, Deserialize, Queryable)]
+pub struct SysUser{
+
+}
