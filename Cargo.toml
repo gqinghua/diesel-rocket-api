@@ -1,8 +1,8 @@
 [package]
-name = "rust-diesel-rocket-api"
-version = "0.0.0"
-authors = ["user-name <user@example.com>"]
-edition = "2018"
+name = "diesel-rocket-api"
+version = "1.0.0"
+authors = ["h18239569764@163.com"]
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
