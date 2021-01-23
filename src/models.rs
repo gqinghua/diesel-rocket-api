@@ -25,7 +25,12 @@ pub struct UpdatePost<'a> {
     pub published: Option<bool>,
 }
 
+use super::schema::sys_user;
 #[derive(Serialize, Deserialize, Queryable)]
 pub struct SysUser{
-
+    pub id: i32,
+    pub account: String,
+    pub password: String,
+    pub name: String,
+    pub del: i32,
 }

@@ -10,10 +10,11 @@ use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use rocket::request::Form;
 use rocket_contrib::json::Json;
-use models::{Post, NewPost, UpdatePost};
+use models::{Post, NewPost, UpdatePost,SysUser};
 use dotenv::dotenv;
 use std::env;
 use log::{info};
+
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
@@ -83,6 +84,17 @@ fn read_detail(id: i32) -> Json<Post> {
         .expect(&format!("Unable to find post {}", id));
     Json(result)
 }
+#[get("/sysUser/<id>")]
+fn sysUserById(id: i32) -> Json<SysUser> {
+    use schema::sys_user::dsl::sys_user;
+    info!("Razor id: {}",  id);
+    let connection = establish_connection();
+    let result = sys_user
+        .find(id)
+        .get_result(&connection)
+        .expect(&format!("Unable to find post {}", id));
+    Json(result)
+}
 
 #[patch("/posts/<id>", data = "<post>")]
 fn update_detail(id: i32, post: Json<UpdatePost>) -> Json<Post> {
@@ -116,6 +128,6 @@ fn delete_detail(id: i32) -> Json<Post> {
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes![read, create, read_detail, update_detail, delete_detail])
+        .mount("/", routes![read,sysUserById, create, read_detail, update_detail, delete_detail])
         .launch();
 }
