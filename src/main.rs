@@ -10,7 +10,7 @@ use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use rocket::request::Form;
 use rocket_contrib::json::Json;
-use models::{Post, NewPost, UpdatePost,SysUser};
+use models::models::{Post, NewPost, UpdatePost,SysUser};
 use dotenv::dotenv;
 use std::env;
 use log::{info};

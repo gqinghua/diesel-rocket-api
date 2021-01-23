@@ -8,7 +8,7 @@ pub struct Post {
   pub published: bool,
 }
 
-use super::schema::posts;
+use super::super::schema::posts;
 
 #[derive(Deserialize, Insertable)] 
 #[table_name="posts"]
@@ -25,7 +25,7 @@ pub struct UpdatePost<'a> {
     pub published: Option<bool>,
 }
 
-use super::schema::sys_user;
+use super::super::schema::sys_user;
 #[derive(Serialize, Deserialize, Queryable)]
 pub struct SysUser{
     pub id: i32,
