@@ -103,24 +103,24 @@ fn sysUserById(id: i32) -> Json<SysUser> {
     Json(result)
 }
 
-// #[patch("/posts/<id>", data = "<post>")]
-// fn update_detail(id: i32, post: Jsendpointson<UpdatePost>) -> Json<Post> {
-//     // use schema::posts::dsl::{posts, published};
-//     use super::super::schema::posts::dsl::{posts,published};
-//
-//     let is_published = match &post.published {
-//         Some(v) => v,
-//         None => &false,
-//     };
-//
-//     let connection = establish_connection();
-//     let result = diesel::update(posts.find(id))
-//         .set(published.eq(is_published))
-//         .get_result::<Post>(&connection)
-//         .expect(&format!("Unable to find post {}", id));
-//
-//     Json(result)
-// }
+#[patch("/posts/<id>", data = "<post>")]
+fn update_detail(id: i32, post: Json<UpdatePost>) -> Json<Post> {
+    // use schema::posts::dsl::{posts, published};
+    use super::super::schema::posts::dsl::{posts,published};
+
+    let is_published = match &post.published {
+        Some(v) => v,
+        None => &false,
+    };
+
+    let connection = establish_connection();
+    let result = diesel::update(posts.find(id))
+        .set(published.eq(is_published))
+        .get_result::<Post>(&connection)
+        .expect(&format!("Unable to find post {}", id));
+
+    Json(result)
+}
 
 #[delete("/posts/<id>")]
 fn delete_detail(id: i32) -> Json<Post> {
@@ -143,5 +143,5 @@ fn delete_detail(id: i32) -> Json<Post> {
 // }
 pub fn fuel(rocket: Rocket) -> Rocket {
     // rocket.mount("/", routes![read,sysUserById, create, read_detail, update_detail, delete_detail])
-    rocket.mount("/", routes![read,sysUserById, create, read_detail,  delete_detail])
+    rocket.mount("/", routes![read,sysUserById, create, read_detail, update_detail, delete_detail])
 }
