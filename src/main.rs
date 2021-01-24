@@ -1,135 +1,42 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-#[macro_use] extern crate rocket;
-#[macro_use] extern crate diesel;
+#[macro_use]
+extern crate diesel;
+#[macro_use]
+extern crate diesel_migrations;
+#[macro_use]
+extern crate rocket;
+extern crate rocket_contrib;
+#[macro_use]
+extern crate serde;
+#[macro_use]
+extern crate serde_json;
 
-mod models;
-mod schema;
-
-use diesel::prelude::*;
-use diesel::pg::PgConnection;
-use rocket::request::Form;
-use rocket_contrib::json::Json;
-use models::models::{Post, NewPost, UpdatePost,SysUser};
-use dotenv::dotenv;
-use std::env;
-use log::{info};
+pub mod db;
+pub mod schema;
+pub mod models;
+pub mod product;
 
 
-pub fn establish_connection() -> PgConnection {
-    dotenv().ok();
+embed_migrations!("migrations");
 
-    let database_url = env::var("DATABASE_URL")
-        .expect("DATABASE_URL must be set");
-    PgConnection::establish(&database_url)
-        .expect(&format!("Error connecting to {}", database_url))
+#[get("/")]
+fn health_check() -> &'static str {
+    "OK"
 }
 
-#[derive(FromForm)]
-struct ReadPostParams {
-    is_published: Option<bool>,
-    limit: Option<i64>,
+fn rocket() -> rocket::Rocket {
+    embedded_migrations::run(&db::pool::pg_connection()).expect("expected successful migration");
+    let mut rocket = rocket::ignite()
+        .mount("/api", routes![health_check]);
+    rocket = product::handler::fuel(rocket);
+    rocket.manage(db::pool::pool())
 }
 
-#[get("/posts?<read_post_params..>")]
-fn read(read_post_params: Form<ReadPostParams>) -> Json<Vec<Post>> {
-    use schema::posts::dsl::{posts, published};
-
-    let is_published = match read_post_params.is_published {
-        Some(v) => v,
-        None => true,
-    };
-
-    let limit = match read_post_params.limit {
-        Some(v) => v,
-        None => 5,
-    };
-
-    let connection = establish_connection();
-    let results = posts
-        .filter(published.eq(is_published))
-        .limit(limit)
-        .load::<Post>(&connection)
-        .expect("Error loading posts");
-
-    Json(results)
-}
-
-#[post("/posts", data = "<post>")]
-fn create(post: Json<NewPost>) -> Json<Post> {
-    use schema::posts;
-    
-    let new_post = NewPost {
-        title: &post.title,
-        body: &post.body,
-    };
-    
-    let connection = establish_connection();
-    let result: Post = diesel::insert_into(posts::table)
-        .values(&new_post)
-        .get_result(&connection)
-        .expect("Error saving new post");
-
-    Json(result)
-}
-
-#[get("/posts/<id>")]
-fn read_detail(id: i32) -> Json<Post> {
-    use schema::posts::dsl::posts;
-    info!("Razor id: {}",  id);
-    let connection = establish_connection();
-    let result = posts
-        .find(id)
-        .get_result::<Post>(&connection)
-        .expect(&format!("Unable to find post {}", id));
-    Json(result)
-}
-#[get("/sysUser/<id>")]
-fn sysUserById(id: i32) -> Json<SysUser> {
-    use schema::sys_user::dsl::sys_user;
-    info!("Razor id: {}",  id);
-    let connection = establish_connection();
-    let result = sys_user
-        .find(id)
-        .get_result(&connection)
-        .expect(&format!("Unable to find post {}", id));
-    Json(result)
-}
-
-#[patch("/posts/<id>", data = "<post>")]
-fn update_detail(id: i32, post: Json<UpdatePost>) -> Json<Post> {
-    use schema::posts::dsl::{posts, published};
-
-    let is_published = match &post.published {
-        Some(v) => v,
-        None => &false,
-    };
-    
-    let connection = establish_connection();
-    let result = diesel::update(posts.find(id))
-        .set(published.eq(is_published))
-        .get_result::<Post>(&connection)
-        .expect(&format!("Unable to find post {}", id));
-
-    Json(result)
-}
-
-#[delete("/posts/<id>")]
-fn delete_detail(id: i32) -> Json<Post> {
-    use schema::posts::dsl::{posts};
-
-    let connection = establish_connection();
-    let result = diesel::delete(posts.find(id))
-        .get_result::<Post>(&connection)
-        .expect("Error deleting posts");
-
-    Json(result) 
-}
-mod  product;
 fn main() {
-    // dotenv().ok();
-    // product::router::create_routes();
-    rocket::ignite()
-        .mount("/", routes![read,sysUserById, create, read_detail, update_detail, delete_detail])
-        .launch();
+    // Load env variables
+    dotenv::dotenv().ok();
+
+    // Launch rocket instance
+    rocket().launch();
 }
