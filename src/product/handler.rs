@@ -13,7 +13,7 @@ use log::{info};
 use crate::models::model::{Post, NewPost, UpdatePost,SysUser};
 use rocket::Rocket;
 use crate::db::pool::pg_connection;
-
+use anyhow::Result;
 
 // pub fn establish_connection() -> PgConnection {
 //     dotenv().ok();
@@ -85,7 +85,7 @@ fn read_detail(id: i32) -> Json<Post> {
     Json(result)
 }
 #[get("/sysUser/<id>")]
-fn sysUserById(id: i32) -> Json<SysUser> {
+fn sysUserById(id: i32) -> Result<Json<SysUser>> {
     use super::super::schema::sys_user::dsl::{sys_user};
     info!("Razor id: {}",  id);
     let connection = pg_connection();
@@ -93,7 +93,7 @@ fn sysUserById(id: i32) -> Json<SysUser> {
         .find(id)
         .get_result(&connection)
         .expect("Unable to find post ");
-   Json(result)
+    Ok(Json(result))
 }
 
 #[patch("/posts/<id>", data = "<post>")]
