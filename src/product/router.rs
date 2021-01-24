@@ -1,5 +1,3 @@
-
-
 pub fn create_routes() {
     // rocket::ignite()
     //     .manage(connection::init_pool())
