@@ -125,8 +125,10 @@ fn delete_detail(id: i32) -> Json<Post> {
 
     Json(result) 
 }
-
+mod  product;
 fn main() {
+    // dotenv().ok();
+    // product::router::create_routes();
     rocket::ignite()
         .mount("/", routes![read,sysUserById, create, read_detail, update_detail, delete_detail])
         .launch();
