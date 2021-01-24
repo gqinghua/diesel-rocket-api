@@ -6,7 +6,7 @@ use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use rocket::request::Form;
 use rocket_contrib::json::Json;
-use anyhow::Result;
+
 use dotenv::dotenv;
 use std::env;
 use log::{info};
@@ -85,7 +85,7 @@ fn read_detail(id: i32) -> Json<Post> {
     Json(result)
 }
 #[get("/sysUser/<id>")]
-fn sysUserById(id: i32) -> Result<Json<SysUser>> {
+fn sysUserById(id: i32) -> Json<SysUser> {
     use super::super::schema::sys_user::dsl::{sys_user};
     info!("Razor id: {}",  id);
     let connection = pg_connection();
@@ -93,7 +93,7 @@ fn sysUserById(id: i32) -> Result<Json<SysUser>> {
         .find(id)
         .get_result(&connection)
         .expect("Unable to find post ");
-   ok( Json(result))
+   Json(result)
 }
 
 #[patch("/posts/<id>", data = "<post>")]
