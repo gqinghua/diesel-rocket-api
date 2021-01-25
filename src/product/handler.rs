@@ -1,7 +1,6 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
 
-
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use rocket::request::Form;
@@ -10,7 +9,7 @@ use rocket_contrib::json::Json;
 use dotenv::dotenv;
 use std::env;
 use log::{info};
-use crate::models::model::{Post, NewPost, UpdatePost,SysUser};
+use crate::models::model::{Post, NewPost, UpdatePost, SysUser};
 use rocket::Rocket;
 use crate::db::pool::pg_connection;
 use anyhow::Result;
@@ -55,39 +54,40 @@ fn read(read_post_params: Form<ReadPostParams>) -> Json<Vec<Post>> {
 }
 
 #[post("/posts", data = "<post>")]
-fn create(post: Json<NewPost>) -> Json<Post> {
+fn create(post: Json<NewPost>) -> Result<Json<Post>> {
     use super::super::schema::posts;
 
     let new_post = NewPost {
         title: &post.title,
         body: &post.body,
     };
-
+    info!("Razor id: {}", new_post.body);
     let connection = pg_connection();
     let result: Post = diesel::insert_into(posts::table)
         .values(&new_post)
         .get_result(&connection)
         .expect("Error saving new post");
 
-    Json(result)
+    Ok(Json(result))
 }
 
 #[get("/posts/<id>")]
-fn read_detail(id: i32) -> Json<Post> {
+fn read_detail(id: i32) -> Result<Json<Post>> {
     use super::super::schema::posts::dsl::{posts};
 
-    info!("Razor id: {}",  id);
+    info!("Razor id: {}", id);
     let connection = pg_connection();
     let result = posts
         .find(id)
         .get_result::<Post>(&connection)
         .expect(&format!("Unable to find post {}", id));
-    Json(result)
+   Ok(Json(result))
 }
+
 #[get("/sysUser/<id>")]
 fn sysUserById(id: i32) -> Result<Json<SysUser>> {
     use super::super::schema::sys_user::dsl::{sys_user};
-    info!("Razor id: {}",  id);
+    info!("Razor id: {}", id);
     let connection = pg_connection();
     let result = sys_user
         .find(id)
@@ -115,7 +115,7 @@ fn update_detail(id: i32, post: Json<UpdatePost>) -> Json<Post> {
 }
 
 #[delete("/posts/<id>")]
-fn delete_detail(id: i32) -> Json<Post> {
+fn delete_detail(id: i32) -> Result<Json<Post>> {
     // use schema::posts::dsl::{posts};
     use super::super::schema::posts::dsl::{posts};
 
@@ -124,7 +124,7 @@ fn delete_detail(id: i32) -> Json<Post> {
         .get_result::<Post>(&connection)
         .expect("Error deleting posts");
 
-    Json(result)
+    Ok(Json(result))
 }
 
 pub fn fuel(rocket: Rocket) -> Rocket {

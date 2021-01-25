@@ -7,3 +7,9 @@ CREATE TABLE sys_user (
   del int ,
   create_date timestamp
 )
+CREATE TABLE posts (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR NOT NULL,
+  body TEXT NOT NULL,
+  published BOOLEAN NOT NULL DEFAULT 'f'
+)
