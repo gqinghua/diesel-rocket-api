@@ -34,3 +34,9 @@ pub struct SysUser{
     pub name: String,
     pub del: i32,
 }
+
+#[derive(Serialize, Deserialize, Queryable)]
+pub struct ResPageDTO {
+    pub page: Option<u64>,
+    pub size: Option<u64>,
+}
