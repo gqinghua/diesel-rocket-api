@@ -30,6 +30,7 @@ fn rocket() -> rocket::Rocket {
     let mut rocket = rocket::ignite()
         .mount("/api", routes![health_check]);
     rocket = product::handler::fuel(rocket);
+    rocket = product::catchers::fuel(rocket);
     rocket.manage(db::pool::pool())
 }
 
