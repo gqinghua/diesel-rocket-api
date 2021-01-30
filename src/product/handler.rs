@@ -95,7 +95,7 @@ fn sysUserById(id: i32) -> Result<Json<SysUser>> {
     let result = sys_user
         .find(id)
         .get_result(&connection)
-        .expect("Unable to find post ");
+        .expect("Unable to find post");
     Ok(Json(result))
 }
 

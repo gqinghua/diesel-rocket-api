@@ -4,6 +4,5 @@ CREATE TABLE sys_user (
   account  VARCHAR ,
   password varchar ,
  name varchar ,
-  del int ,
-  create_date timestamp
+  del int
 )
