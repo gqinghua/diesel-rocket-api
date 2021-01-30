@@ -9,7 +9,7 @@ use rocket_contrib::json::Json;
 use dotenv::dotenv;
 use std::env;
 use log::{info};
-use crate::models::model::{Post, NewPost, UpdatePost, SysUser};
+use crate::models::model::{Post, NewPost, UpdatePost, SysUser,SysUserAO};
 use rocket::Rocket;
 use crate::db::pool::pg_connection;
 use anyhow::Result;
@@ -98,6 +98,25 @@ fn sysUserById(id: i32) -> Result<Json<SysUser>> {
         .expect("Unable to find post");
     Ok(Json(result))
 }
+#[post("/CreateSysuser", data = "<SysUserAO>")]
+fn createSysUser(SysUserAO: Json<SysUserAO>) -> Result<Json<SysUser>> {
+    use super::super::schema::sys_user;
+
+    let CreaSysUserAO = SysUserAO {
+        account: &SysUserAO.account,
+        password: &SysUserAO.password,
+        name: &SysUserAO.name,
+        del: &SysUserAO.del,
+    };
+    info!("Razor id: {}", CreaSysUserAO.name);
+    let connection = pg_connection();
+    let result: SysUser = diesel::insert_into(sys_user::table)
+        .values(CreaSysUserAO)
+        .get_result(&connection)
+        .expect("Error saving new post");
+
+    Ok(Json(result))
+}
 
 #[patch("/posts/<id>", data = "<post>")]
 fn update_detail(id: i32, post: Json<UpdatePost>) -> Json<Post> {
@@ -131,5 +150,6 @@ fn delete_detail(id: i32) -> Result<Json<Post>> {
 }
 
 pub fn fuel(rocket: Rocket) -> Rocket {
-    rocket.mount("/", routes![read,sysUserById, create, read_detail, update_detail, delete_detail])
+    rocket.mount("/", routes![
+    read,sysUserById,createSysUser, create, read_detail, update_detail, delete_detail])
 }

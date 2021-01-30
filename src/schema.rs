@@ -13,7 +13,7 @@ table! {
         account -> Varchar,
         password -> Varchar,
         name -> Varchar,
-        del -> Int4,
+        del -> Varchar,
 
     }
 }

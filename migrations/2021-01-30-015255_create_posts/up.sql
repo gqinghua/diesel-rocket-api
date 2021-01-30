@@ -4,5 +4,5 @@ CREATE TABLE sys_user (
   account  VARCHAR ,
   password varchar ,
  name varchar ,
-  del int
+  del varchar
 )

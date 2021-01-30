@@ -32,7 +32,16 @@ pub struct SysUser{
     pub account: String,
     pub password: String,
     pub name: String,
-    pub del: i32,
+    pub del: String,
+}
+
+#[derive(Deserialize, Insertable)]
+#[table_name="sys_user"]
+pub struct SysUserAO<'a> {
+    pub account: &'a str,
+    pub password: &'a str,
+    pub name: &'a str,
+    pub del: &'a str,
 }
 
 #[derive(Serialize, Deserialize, Queryable)]
