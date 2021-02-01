@@ -9,11 +9,12 @@ use rocket_contrib::json::Json;
 use dotenv::dotenv;
 use std::env;
 use log::{info};
-use crate::models::model::{Post, NewPost, UpdatePost, SysUser,SysUserAO};
+use crate::models::model::{Post, NewPost, UpdatePost, SysUser,SysUserAO,UPdateSysUser};
 use rocket::Rocket;
 use crate::db::pool::pg_connection;
 use anyhow::Result;
 use rocket::response::status;
+use crate::crud::users;
 use crate::models::response::{Response,ResponseWithStatus};
 use rocket::http::Status;
 
@@ -117,9 +118,30 @@ fn createSysUser(SysUserAO: Json<SysUserAO>) -> Result<Json<SysUser>> {
 
     Ok(Json(result))
 }
+#[post("/createSysusers/<ids>", data = "<SysUserAOUpdate>")]
+fn UPdateSysUser(ids: i32,SysUserAOUpdate: Json<UPdateSysUser>) -> Result<Json<SysUser>> {
+
+ //    use super::super::schema::sys_user::dsl::{sys_user,account};
+ // // let Update= UPdateSysUser{
+ // //     account: &SysUserAOUpdate.account,
+ // //     password: &SysUserAOUpdate.password,
+ // //     name: &SysUserAOUpdate.name,
+ // //     del: &SysUserAOUpdate.del,
+ // // };
+ //    SysUserAOUpdate.0;
+    let connection = pg_connection();
+ //    let result = diesel::update(sys_user.find(ids))
+ //        .set(&SysUserAOUpdate)
+ //        .get_result::<SysUser>(&connection)
+ //        .expect(&format!("Unable to find post {}", ids));
+ //
+ //    Ok(Json(result))
+    let updated_user = users::update(&ids,&connection, &SysUserAOUpdate.0)?;
+    Ok(Json(updated_user))
+}
 
 #[patch("/posts/<id>", data = "<post>")]
-fn update_detail(id: i32, post: Json<UpdatePost>) -> Json<Post> {
+fn update_detail(id: i32, post: Json<UpdatePost>) -> Result<Json<Post>> {
     use super::super::schema::posts::dsl::{posts,published};
 
     let is_published = match &post.published {
@@ -133,7 +155,7 @@ fn update_detail(id: i32, post: Json<UpdatePost>) -> Json<Post> {
         .get_result::<Post>(&connection)
         .expect(&format!("Unable to find post {}", id));
 
-    Json(result)
+    Ok(Json(result))
 }
 
 #[delete("/posts/<id>")]

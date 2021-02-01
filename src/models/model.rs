@@ -37,6 +37,15 @@ pub struct SysUser{
 
 #[derive(Deserialize, Insertable)]
 #[table_name="sys_user"]
+pub struct UPdateSysUser<'a> {
+    pub account: &'a str,
+    pub password: &'a str,
+    pub name: &'a str,
+    pub del: &'a str,
+}
+
+#[derive(Deserialize, Insertable)]
+#[table_name="sys_user"]
 pub struct SysUserAO<'a> {
     pub account: &'a str,
     pub password: &'a str,
