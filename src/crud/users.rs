@@ -1,5 +1,5 @@
 use anyhow::Result;
-use diesel::insert_into;
+use diesel::{insert_into, RunQueryDsl};
 use diesel::pg::PgConnection;
 use crate::models::model::{UPdateSysUser};
 use crate::schemas::users::{UserCreate, UserUpdate};
