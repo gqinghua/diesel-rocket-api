@@ -102,14 +102,10 @@ fn sysUserById(id: i32) -> Result<Json<SysUser>> {
 
 #[get("/sysRoleById/<id>")]
 fn sysRoleById(id: i32) -> Result<Json<SysRole>> {
-    use super::super::schema::sys_role::dsl::{sys_role};
-    info!("Razor id: {}", id);
     let connection = pg_connection();
-    let result = sys_role
-        .find(id)
-        .get_result(&connection)
-        .expect("Unable to find post");
-    Ok(Json(result))
+    let updated_user = users::sysRoleById(id,connection)?;
+    Ok(Json(updated_user))
+
 }
 
 #[post("/CreateSysuser", data = "<SysUserAO>")]
