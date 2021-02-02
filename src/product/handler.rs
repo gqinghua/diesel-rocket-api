@@ -9,7 +9,7 @@ use rocket_contrib::json::Json;
 use dotenv::dotenv;
 use std::env;
 use log::{info};
-use crate::models::model::{Post, NewPost, UpdatePost, SysUser,SysUserAO,UPdateSysUser};
+use crate::models::model::{Post, NewPost, UpdatePost, SysUser,SysUserAO,UPdateSysUser,SysRole};
 use rocket::Rocket;
 use crate::db::pool::pg_connection;
 use anyhow::Result;
@@ -99,6 +99,19 @@ fn sysUserById(id: i32) -> Result<Json<SysUser>> {
         .expect("Unable to find post");
     Ok(Json(result))
 }
+
+#[get("/sysRoleById/<id>")]
+fn sysRoleById(id: i32) -> Result<Json<SysRole>> {
+    use super::super::schema::sys_role::dsl::{sys_role};
+    info!("Razor id: {}", id);
+    let connection = pg_connection();
+    let result = sys_role
+        .find(id)
+        .get_result(&connection)
+        .expect("Unable to find post");
+    Ok(Json(result))
+}
+
 #[post("/CreateSysuser", data = "<SysUserAO>")]
 fn createSysUser(SysUserAO: Json<SysUserAO>) -> Result<Json<SysUser>> {
     use super::super::schema::sys_user;
@@ -156,7 +169,10 @@ fn delete_detail(id: i32) -> Result<Json<Post>> {
     Ok(Json(result))
 }
 
+
+
+
 pub fn fuel(rocket: Rocket) -> Rocket {
-    rocket.mount("/", routes![
+    rocket.mount("/", routes![sysRoleById,
     read,sysUserById,createSysUser, create, read_detail, update_detail, delete_detail,UPdateSysUser])
 }

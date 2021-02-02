@@ -58,3 +58,17 @@ pub struct ResPageDTO {
     pub page: Option<u64>,
     pub size: Option<u64>,
 }
+
+
+
+
+
+use super::super::schema::sys_role;
+#[derive(Serialize, Deserialize, Queryable)]
+pub struct SysRole{
+    pub id: i32,
+    pub name: String,
+    pub del: String,
+    pub create_date: String,
+    pub parent_id: String,
+}
