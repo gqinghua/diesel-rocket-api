@@ -120,23 +120,8 @@ fn createSysUser(SysUserAO: Json<SysUserAO>) -> Result<Json<SysUser>> {
 }
 #[post("/createSysusers/<ids>", data = "<SysUserAOUpdate>")]
 fn UPdateSysUser(ids: i32,SysUserAOUpdate: Json<UPdateSysUser>) -> Result<Json<SysUser>> {
-
- //    use super::super::schema::sys_user::dsl::{sys_user,account};
- // // let Update= UPdateSysUser{
- // //     account: &SysUserAOUpdate.account,
- // //     password: &SysUserAOUpdate.password,
- // //     name: &SysUserAOUpdate.name,
- // //     del: &SysUserAOUpdate.del,
- // // };
- //    SysUserAOUpdate.0;
     let connection = pg_connection();
- //    let result = diesel::update(sys_user.find(ids))
- //        .set(&SysUserAOUpdate)
- //        .get_result::<SysUser>(&connection)
- //        .expect(&format!("Unable to find post {}", ids));
- //
- //    Ok(Json(result))
-    let updated_user = users::update(&ids,&connection, &SysUserAOUpdate.0)?;
+    let updated_user = users::update(ids,connection, SysUserAOUpdate.0)?;
     Ok(Json(updated_user))
 }
 
@@ -173,5 +158,5 @@ fn delete_detail(id: i32) -> Result<Json<Post>> {
 
 pub fn fuel(rocket: Rocket) -> Rocket {
     rocket.mount("/", routes![
-    read,sysUserById,createSysUser, create, read_detail, update_detail, delete_detail])
+    read,sysUserById,createSysUser, create, read_detail, update_detail, delete_detail,UPdateSysUser])
 }

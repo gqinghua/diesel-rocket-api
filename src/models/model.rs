@@ -35,13 +35,13 @@ pub struct SysUser{
     pub del: String,
 }
 
-#[derive(Deserialize, Insertable)]
+#[derive(Insertable, AsChangeset, Serialize, Deserialize)]
 #[table_name="sys_user"]
-pub struct UPdateSysUser<'a> {
-    pub account: &'a str,
-    pub password: &'a str,
-    pub name: &'a str,
-    pub del: &'a str,
+pub struct UPdateSysUser{
+    pub account: String,
+    pub password: String,
+    pub name: String,
+    pub del: String,
 }
 
 #[derive(Deserialize, Insertable)]
