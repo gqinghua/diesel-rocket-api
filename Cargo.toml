@@ -18,3 +18,14 @@ log = "0.4"
 anyhow = { version = "1.0", default-features = false }
 uuid = { version = ">=0.7.0, <0.9.0", features = ["v4", "serde"] }
 jsonwebtoken = "7.2.0"
+md5 = "0.7.0"
+rustflake = "0.1.0"
+yaml-rust = "0.4"
+#captcha
+captcha = "0.0.8"
+#http client,use rust-tls replace to native tls
+reqwest = { version = "0.11",default-features = false, features = ["json","rustls-tls"] }
+#qrcode
+qrcode = "0.12"
+#image code
+image = "0.23"

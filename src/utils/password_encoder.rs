@@ -1,3 +1,5 @@
+use diesel::ExpressionMethods;
+
 pub struct PasswordEncoder {}
 
 impl PasswordEncoder {
@@ -14,7 +16,7 @@ impl PasswordEncoder {
 ///测试模块
 #[cfg(test)]
 mod test {
-    use crate::util::password_encoder::PasswordEncoder;
+    use crate::utils::password_encoder::PasswordEncoder;
 
     ///测试密码 编码和解码
     #[test]
