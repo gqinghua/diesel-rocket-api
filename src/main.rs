@@ -18,7 +18,7 @@ pub mod models;
 pub mod product;
 pub mod crud;
 pub mod utils;
-
+pub mod tests;
 
 embed_migrations!("migrations");
 
