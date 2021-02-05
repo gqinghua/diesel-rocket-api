@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+use super::super::schema::sys_role;
+use super::super::schema::sys_user_role;
 
 #[derive(Serialize, Deserialize, Queryable)]
 pub struct Post {
@@ -61,9 +63,6 @@ pub struct ResPageDTO {
 
 
 
-
-
-use super::super::schema::sys_role;
 #[derive(Serialize, Deserialize, Queryable)]
 pub struct SysRole{
     pub id: i32,
@@ -71,4 +70,20 @@ pub struct SysRole{
     pub del: String,
     pub create_date: String,
     pub parent_id: String,
+}
+
+#[derive(Serialize, Deserialize, Queryable)]
+pub struct SysUserRole{
+    pub id: i32,
+    pub userId: String,
+    pub roleId: String,
+    pub createDate: String,
+}
+
+#[derive(Deserialize, Insertable)]
+#[table_name="sys_user_role"]
+pub struct SysUserRoleAO<'a> {
+    pub user_id: &'a str,
+    pub role_id: &'a str,
+    pub create_date: &'a str,
 }

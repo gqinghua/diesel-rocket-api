@@ -27,8 +27,18 @@ table! {
     }
 }
 
+table! {
+    sys_user_role (id) {
+        id -> Int4,
+        user_id -> Varchar,
+        role_id -> Varchar,
+        create_date -> Varchar,
+    }
+}
+
 allow_tables_to_appear_in_same_query!(
     posts,
     sys_role,
     sys_user,
+    sys_user_role,
 );

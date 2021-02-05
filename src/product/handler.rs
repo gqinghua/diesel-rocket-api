@@ -9,7 +9,7 @@ use rocket_contrib::json::Json;
 use dotenv::dotenv;
 use std::env;
 use log::{info};
-use crate::models::model::{Post, NewPost, UpdatePost, SysUser,SysUserAO,UPdateSysUser,SysRole};
+use crate::models::model::{Post, NewPost, UpdatePost, SysUser,SysUserAO,UPdateSysUser,SysRole,SysUserRole,SysUserRoleAO};
 use rocket::Rocket;
 use crate::db::pool::pg_connection;
 use anyhow::Result;
@@ -34,7 +34,7 @@ struct ReadPostParams {
 }
 
 #[get("/posts?<read_post_params..>")]
-fn read(read_post_params: Form<ReadPostParams>) -> Json<Vec<Post>> {
+fn read(read_post_params: Form<ReadPostParams>) -> Result<Json<Vec<Post>>> {
     use super::super::schema::posts::dsl::{posts, published};
 
     let is_published = match read_post_params.is_published {
@@ -54,7 +54,7 @@ fn read(read_post_params: Form<ReadPostParams>) -> Json<Vec<Post>> {
         .load::<Post>(&connection)
         .expect("Error loading posts");
 
-    Json(results)
+    Ok(Json(results))
 }
 
 #[post("/posts", data = "<post>")]
@@ -134,6 +134,25 @@ fn UPdateSysUser(ids: i32,SysUserAOUpdate: Json<UPdateSysUser>) -> Result<Json<S
     Ok(Json(updated_user))
 }
 
+
+#[post("/CreateSysuserRole", data = "<sysUserRoleAO>")]
+fn createSysUserRole(sysUserRoleAO: Json<SysUserRoleAO>) -> Result<Json<SysUserRole>> {
+    use super::super::schema::sys_user_role;
+
+  let SysUserRoleAO = SysUserRoleAO{
+      user_id:  &sysUserRoleAO.user_id,
+      role_id:  &sysUserRoleAO.role_id,
+      create_date: &sysUserRoleAO.create_date,
+  };
+    info!("Razor id: {}",sysUserRoleAO.user_id);
+    let connection = pg_connection();
+    let result: SysUserRole = diesel::insert_into(sys_user_role::table)
+        .values(SysUserRoleAO)
+        .get_result(&connection)
+        .expect("Error saving new post");
+
+    Ok(Json(result))
+}
 #[patch("/posts/<id>", data = "<post>")]
 fn update_detail(id: i32, post: Json<UpdatePost>) -> Result<Json<Post>> {
     use super::super::schema::posts::dsl::{posts,published};
@@ -169,6 +188,6 @@ fn delete_detail(id: i32) -> Result<Json<Post>> {
 
 
 pub fn fuel(rocket: Rocket) -> Rocket {
-    rocket.mount("/", routes![sysRoleById,
+    rocket.mount("/", routes![sysRoleById,createSysUserRole,
     read,sysUserById,createSysUser, create, read_detail, update_detail, delete_detail,UPdateSysUser])
 }
