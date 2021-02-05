@@ -1,10 +1,11 @@
 use anyhow::Result;
 use diesel::{insert_into, RunQueryDsl, QueryDsl};
 use diesel::pg::PgConnection;
-use crate::models::model::{ SysUser,SysRole};
+use crate::models::model::{ SysUser,SysRole,SysUserRoleAO,SysUserRole};
 use crate::models::model::UPdateSysUser;
 use super::super::schema::sys_user::dsl::{sys_user};
 use super::super::schema::sys_role::dsl::{sys_role};
+use super::super::schema::sys_user_role::dsl::{sys_user_role};
 
 pub fn update(ids: i32,db: PgConnection, UPdateSysUserd :UPdateSysUser) -> Result<SysUser> {
     let updated_user = diesel::update(sys_user.find(ids)).set(UPdateSysUserd).
@@ -21,3 +22,10 @@ pub fn sysRoleById(ids: i32,db: PgConnection) -> Result<SysRole> {
     Ok(result)
 }
 
+pub fn createSysUserRole(SysUserRoleAO :SysUserRoleAO,db: PgConnection) -> Result<SysUserRole> {
+    let result: SysUserRole = diesel::insert_into(sys_user_role)
+          .values(SysUserRoleAO)
+          .get_result(&db)
+          .expect("Error saving new post");
+    Ok(result)
+}
