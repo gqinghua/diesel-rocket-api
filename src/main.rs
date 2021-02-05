@@ -24,7 +24,7 @@ embed_migrations!("migrations");
 
 #[get("/")]
 fn health_check() -> &'static str {
-    "OK"
+    "OK,diesel-rocket-api"
 }
 
 fn rocket() -> rocket::Rocket {
