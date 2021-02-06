@@ -185,6 +185,6 @@ fn delete_detail(id: i32) -> Result<Json<Post>> {
 
 
 pub fn fuel(rocket: Rocket) -> Rocket {
-    rocket.mount("/", routes![sysRoleById,createSysUserRole,queryUserRoleId,
+    rocket.mount("/sys", routes![sysRoleById,createSysUserRole,queryUserRoleId,
     read,sysUserById,createSysUser, create, read_detail, update_detail, delete_detail,UPdateSysUser])
 }
