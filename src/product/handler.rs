@@ -137,20 +137,6 @@ fn UPdateSysUser(ids: i32,SysUserAOUpdate: Json<UPdateSysUser>) -> Result<Json<S
 
 #[post("/CreateSysuserRole", data = "<sysUserRoleAO>")]
 fn createSysUserRole(sysUserRoleAO: Json<SysUserRoleAO>) -> Result<Json<SysUserRole>> {
-    // let connection = pg_connection();
-  // let SysUserRoleAO = SysUserRoleAO{
-  //     user_id:  &sysUserRoleAO.user_id,
-  //     role_id:  &sysUserRoleAO.role_id,
-  //     create_date: &sysUserRoleAO.create_date,
-  // };
-  //   info!("Razor id: {}",sysUserRoleAO.user_id);
-  //   let connection = pg_connection();
-  //   let result: SysUserRole = diesel::insert_into(sys_user_role::table)
-  //       .values(SysUserRoleAO)
-  //       .get_result(&connection)
-  //       .expect("Error saving new post");
-  //
-  //   Ok(Json(result))
     let connection = pg_connection();
     let updated_user = users::createSysUserRole(sysUserRoleAO.0,connection)?;
     Ok(Json(updated_user))
@@ -175,7 +161,6 @@ fn update_detail(id: i32, post: Json<UpdatePost>) -> Result<Json<Post>> {
 
 #[delete("/posts/<id>")]
 fn delete_detail(id: i32) -> Result<Json<Post>> {
-    // use schema::posts::dsl::{posts};
     use super::super::schema::posts::dsl::{posts};
 
     let connection = pg_connection();
