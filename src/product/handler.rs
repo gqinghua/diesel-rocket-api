@@ -141,6 +141,16 @@ fn createSysUserRole(sysUserRoleAO: Json<SysUserRoleAO>) -> Result<Json<SysUserR
     let updated_user = users::createSysUserRole(sysUserRoleAO.0,connection)?;
     Ok(Json(updated_user))
 }
+
+
+
+#[get("/queryUserRoleId/<id>")]
+fn queryUserRoleId(id: i32) -> Result<Json<SysUserRole>> {
+    let connection = pg_connection();
+    let updated_user = users::queryUserRoleId(id,connection)?;
+    Ok(Json(updated_user))
+}
+
 #[patch("/posts/<id>", data = "<post>")]
 fn update_detail(id: i32, post: Json<UpdatePost>) -> Result<Json<Post>> {
     use super::super::schema::posts::dsl::{posts,published};
@@ -175,6 +185,6 @@ fn delete_detail(id: i32) -> Result<Json<Post>> {
 
 
 pub fn fuel(rocket: Rocket) -> Rocket {
-    rocket.mount("/", routes![sysRoleById,createSysUserRole,
+    rocket.mount("/", routes![sysRoleById,createSysUserRole,queryUserRoleId,
     read,sysUserById,createSysUser, create, read_detail, update_detail, delete_detail,UPdateSysUser])
 }

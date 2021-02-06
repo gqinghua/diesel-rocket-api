@@ -29,3 +29,14 @@ pub fn createSysUserRole(SysUserRoleAO :SysUserRoleAO,db: PgConnection) -> Resul
           .expect("Error saving new post");
     Ok(result)
 }
+
+
+
+pub fn queryUserRoleId(id: i32,db: PgConnection) -> Result<SysUserRole> {
+
+    let result = sys_user_role
+        .find(id)
+        .get_result(&db)
+        .expect("Unable to find post");
+    Ok(result)
+}
